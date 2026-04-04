@@ -164,7 +164,7 @@ export default function SettingsPage() {
                 placeholder="Your name"
                 className="flex-1"
               />
-              <Button onClick={handleSaveProfile} disabled={saving} className="gap-2">
+              <Button variant="teal" onClick={handleSaveProfile} disabled={saving} className="gap-2">
                 <Save className="w-4 h-4" />
                 Save
               </Button>
@@ -211,6 +211,7 @@ export default function SettingsPage() {
             />
           </div>
           <Button 
+            variant="coral"
             onClick={handleChangePassword} 
             disabled={saving || !currentPassword || !newPassword || !confirmPassword}
             className="gap-2"
@@ -238,14 +239,14 @@ export default function SettingsPage() {
             </div>
             <div className="flex gap-1 bg-secondary rounded-lg p-1">
               <Button
-                variant={theme === "light" ? "default" : "ghost"}
+                variant={theme === "light" ? "teal" : "ghost"}
                 size="sm"
                 onClick={() => handleThemeChange("light")}
               >
                 <Sun className="w-4 h-4" />
               </Button>
               <Button
-                variant={theme === "dark" ? "default" : "ghost"}
+                variant={theme === "dark" ? "teal" : "ghost"}
                 size="sm"
                 onClick={() => handleThemeChange("dark")}
               >

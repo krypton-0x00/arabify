@@ -37,15 +37,10 @@ export function Providers({ children }: ProvidersProps) {
     }
   }, []);
 
-  if (!mounted) {
-    // Return children without session provider during SSR to avoid hydration mismatch
-    return <>{children}</>;
-  }
-
   return (
     <SessionProvider>
       <QueryClientProvider client={queryClient}>
-        {children}
+        {mounted ? children : <div className="min-h-screen bg-background" />}
       </QueryClientProvider>
     </SessionProvider>
   );

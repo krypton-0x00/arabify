@@ -170,6 +170,7 @@ export default function GoalsPage() {
               className="w-24"
             />
             <Button
+              variant="teal"
               onClick={() => updateGoalMutation.mutate(newTarget)}
               disabled={updateGoalMutation.isPending}
             >

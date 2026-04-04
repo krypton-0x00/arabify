@@ -102,7 +102,7 @@ export default function LandingPage() {
                   <Button variant="ghost" className="hover:bg-secondary">Login</Button>
                 </Link>
                 <Link href="/register">
-                  <Button className="bg-gradient-gold text-white btn-glow hover:opacity-90">Get Started</Button>
+                  <Button variant="gold" size="lg" className="gap-2 px-8">Get Started</Button>
                 </Link>
               </div>
             )}
@@ -131,14 +131,14 @@ export default function LandingPage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             {isLoggedIn ? (
               <Link href="/decks">
-                <Button size="lg" className="bg-gradient-teal text-white btn-glow-teal gap-2 px-8">
+                <Button variant="coral" size="lg" className="gap-2 px-8">
                   Go to Dashboard
                   <ArrowRight className="w-4 h-4" />
                 </Button>
               </Link>
             ) : (
               <Link href="/register">
-                <Button size="lg" className="bg-gradient-gold text-white btn-glow gap-2 px-8">
+                <Button variant="gold" size="lg" className="gap-2 px-8">
                   Start Learning Free
                   <ArrowRight className="w-4 h-4" />
                 </Button>
@@ -215,7 +215,7 @@ export default function LandingPage() {
             </p>
             {!isLoggedIn && (
               <Link href="/register">
-                <Button size="lg" className="bg-gradient-gold text-white btn-glow px-8">
+                <Button variant="gold" size="lg" className="gap-2 px-8">
                   Create Free Account
                 </Button>
               </Link>

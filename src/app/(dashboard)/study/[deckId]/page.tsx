@@ -145,21 +145,21 @@ export default function StudyPage() {
         {/* Mode Selector */}
         <div className="flex items-center justify-center gap-2 mb-6">
           <Button
-            variant={studyMode === "ar-en" ? "default" : "outline"}
+            variant={studyMode === "ar-en" ? "teal" : "outline"}
             size="sm"
             onClick={() => changeMode("ar-en")}
           >
             Arabic → English
           </Button>
           <Button
-            variant={studyMode === "en-ar" ? "default" : "outline"}
+            variant={studyMode === "en-ar" ? "coral" : "outline"}
             size="sm"
             onClick={() => changeMode("en-ar")}
           >
             English → Arabic
           </Button>
           <Button
-            variant={studyMode === "random" ? "default" : "outline"}
+            variant={studyMode === "random" ? "sage" : "outline"}
             size="sm"
             onClick={() => changeMode("random")}
             className="gap-2"
@@ -210,29 +210,30 @@ export default function StudyPage() {
             <div className="flex gap-2 justify-center flex-wrap">
               <Button
                 variant="destructive"
-                className="flex-1 min-w-[100px]"
+                className="flex-1 min-w-[100px] shadow-lg shadow-red-500/20"
                 onClick={() => handleRating("again")}
                 disabled={reviewMutation.isPending}
               >
                 <XCircle className="w-4 h-4 mr-2" /> Again (1)
               </Button>
               <Button
-                variant="outline"
-                className="flex-1 min-w-[100px] border-orange-500 text-orange-500 hover:bg-orange-50"
+                variant="coral"
+                className="flex-1 min-w-[100px]"
                 onClick={() => handleRating("hard")}
                 disabled={reviewMutation.isPending}
               >
                 Hard (2)
               </Button>
               <Button
-                variant="outline"
-                className="flex-1 min-w-[100px] border-teal text-teal hover:bg-teal/10"
+                variant="teal"
+                className="flex-1 min-w-[100px]"
                 onClick={() => handleRating("good")}
                 disabled={reviewMutation.isPending}
               >
                 Good (3)
               </Button>
               <Button
+                variant="sage"
                 className="flex-1 min-w-[100px]"
                 onClick={() => handleRating("easy")}
                 disabled={reviewMutation.isPending}

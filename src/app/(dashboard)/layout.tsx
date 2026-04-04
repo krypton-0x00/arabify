@@ -59,7 +59,7 @@ export default async function DashboardLayout({
         {/* Quick Actions */}
         <div className="p-4">
           <Link href="/decks">
-            <Button className="w-full gap-2" size="sm">
+            <Button variant="gold" className="w-full gap-2" size="sm">
               <Plus className="w-4 h-4" />
               New Deck
             </Button>

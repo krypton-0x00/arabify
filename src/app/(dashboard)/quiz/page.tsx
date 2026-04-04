@@ -180,10 +180,10 @@ export default function QuizPage() {
               const isSelected = selectedAnswer === option;
               const isCorrect = option === currentQuestion.correctAnswer;
               
-              let buttonClass = "border-border hover:border-gold hover:bg-gold/5";
+              let buttonClass = "border-gold/30 hover:border-gold hover:bg-gold/10";
               if (showResult) {
-                if (isCorrect) buttonClass = "border-teal bg-teal/10 text-teal";
-                else if (isSelected) buttonClass = "border-red-500 bg-red-10 text-red-500";
+                if (isCorrect) buttonClass = "border-teal bg-teal/20 text-teal";
+                else if (isSelected) buttonClass = "border-red-500 bg-red-500/20 text-red-500";
               }
 
               return (
@@ -226,7 +226,7 @@ export default function QuizPage() {
                   ? "Correct!" 
                   : `Incorrect - The answer is: ${currentQuestion.correctAnswer}`}
               </p>
-              <Button onClick={nextQuestion} className="gap-2">
+              <Button variant="teal" onClick={nextQuestion} className="gap-2">
                 {currentIndex < questions.length - 1 ? "Next Question" : "Finish Quiz"}
                 <ArrowLeft className="w-4 h-4 rotate-180" />
               </Button>
@@ -257,7 +257,7 @@ export default function QuizPage() {
           </div>
 
           <div className="flex gap-4 justify-center">
-            <Button onClick={generateQuestions} className="gap-2">
+            <Button variant="coral" onClick={generateQuestions} className="gap-2">
               <RefreshCw className="w-4 h-4" />
               Try Again
             </Button>
@@ -306,21 +306,21 @@ export default function QuizPage() {
             <label className="block text-sm font-medium mb-2">Quiz Direction</label>
             <div className="flex gap-2 flex-wrap">
               <Button
-                variant={quizMode === "mixed" ? "default" : "outline"}
+                variant={quizMode === "mixed" ? "teal" : "outline"}
                 size="sm"
                 onClick={() => setQuizMode("mixed")}
               >
                 Mixed
               </Button>
               <Button
-                variant={quizMode === "ar-en" ? "default" : "outline"}
+                variant={quizMode === "ar-en" ? "coral" : "outline"}
                 size="sm"
                 onClick={() => setQuizMode("ar-en")}
               >
                 Arabic → English
               </Button>
               <Button
-                variant={quizMode === "en-ar" ? "default" : "outline"}
+                variant={quizMode === "en-ar" ? "sage" : "outline"}
                 size="sm"
                 onClick={() => setQuizMode("en-ar")}
               >
@@ -345,6 +345,7 @@ export default function QuizPage() {
           </div>
 
           <Button 
+            variant="gold"
             onClick={generateQuestions}
             disabled={!selectedDeck && (!decks?.length || decks.reduce((acc: number, d: Deck) => acc + (d._count?.cards || 0), 0) < 4)}
             className="w-full gap-2"

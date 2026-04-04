@@ -136,7 +136,7 @@ export default function DecksPage() {
             Manage your flashcard decks
           </p>
         </div>
-        <Button onClick={() => setIsCreateOpen(true)} className="gap-2">
+        <Button onClick={() => setIsCreateOpen(true)} variant="gold" className="gap-2">
           <Plus className="w-4 h-4" />
           New Deck
         </Button>
@@ -155,7 +155,7 @@ export default function DecksPage() {
           <p className="text-muted-foreground mb-6 max-w-sm mx-auto">
             Create your first deck to start learning Arabic vocabulary
           </p>
-          <Button onClick={() => setIsCreateOpen(true)} className="bg-gradient-gold text-white btn-glow">
+          <Button onClick={() => setIsCreateOpen(true)} variant="gold">
             <Plus className="w-4 h-4 mr-2" />
             Create Deck
           </Button>
@@ -275,7 +275,7 @@ export default function DecksPage() {
               >
                 Cancel
               </Button>
-              <Button type="submit" disabled={createMutation.isPending} className="bg-gradient-gold text-white">
+              <Button type="submit" variant="gold" disabled={createMutation.isPending}>
                 {createMutation.isPending ? "Creating..." : "Create Deck"}
               </Button>
             </DialogFooter>
@@ -310,7 +310,7 @@ export default function DecksPage() {
             {/* Import Mode Toggle */}
             <div className="flex gap-2">
               <Button
-                variant={importMode === "file" ? "default" : "outline"}
+                variant={importMode === "file" ? "teal" : "outline"}
                 size="sm"
                 onClick={() => setImportMode("file")}
                 className="flex-1 gap-2"
@@ -319,7 +319,7 @@ export default function DecksPage() {
                 Upload File
               </Button>
               <Button
-                variant={importMode === "text" ? "default" : "outline"}
+                variant={importMode === "text" ? "teal" : "outline"}
                 size="sm"
                 onClick={() => setImportMode("text")}
                 className="flex-1 gap-2"
@@ -398,6 +398,7 @@ export default function DecksPage() {
                 Cancel
               </Button>
               <Button
+                variant="gold"
                 onClick={handleImport}
                 disabled={!importJson || importMutation.isPending || !selectedDeck}
               >

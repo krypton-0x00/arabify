@@ -96,7 +96,7 @@ export default function RegisterPage() {
           <p className="text-xs text-muted-foreground">Minimum 6 characters</p>
         </div>
 
-        <Button type="submit" className="w-full" disabled={loading}>
+        <Button type="submit" variant="gold" className="w-full" disabled={loading}>
           {loading ? "Creating account..." : "Create Account"}
         </Button>
       </form>

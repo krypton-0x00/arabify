@@ -1,5 +1,16 @@
 @import "tailwindcss";
 
+@theme {
+  --color-gold: var(--gold);
+  --color-gold-light: var(--gold-light);
+  --color-gold-dark: var(--gold-dark);
+  --color-teal: var(--teal);
+  --color-teal-light: var(--teal-light);
+  --color-teal-dark: var(--teal-dark);
+  --color-coral: var(--coral);
+  --color-sage: var(--sage);
+}
+
 :root {
   /* Light mode - Warm palette */
   --background: #faf7f2;

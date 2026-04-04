@@ -110,7 +110,7 @@ export default function DeckDetailPage() {
           )}
         </div>
         <Link href={`/study/${deckId}`}>
-          <Button className="gap-2" disabled={deck.cards.length === 0}>
+          <Button variant="teal" className="gap-2" disabled={deck.cards.length === 0}>
             <Play className="w-4 h-4" />
             Study
           </Button>
@@ -145,7 +145,7 @@ export default function DeckDetailPage() {
       {/* Add Card Button */}
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-lg font-semibold">Cards</h2>
-        <Button onClick={() => setIsAddCardOpen(true)} size="sm" className="gap-2">
+        <Button variant="gold" onClick={() => setIsAddCardOpen(true)} size="sm" className="gap-2">
           <Plus className="w-4 h-4" />
           Add Card
         </Button>
@@ -251,7 +251,7 @@ export default function DeckDetailPage() {
               >
                 Cancel
               </Button>
-              <Button type="submit" disabled={createCardMutation.isPending}>
+              <Button type="submit" variant="gold" disabled={createCardMutation.isPending}>
                 {createCardMutation.isPending ? "Adding..." : "Add Card"}
               </Button>
             </DialogFooter>
