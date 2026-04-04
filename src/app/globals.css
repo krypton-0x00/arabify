@@ -1,0 +1,235 @@
+@import "tailwindcss";
+
+:root {
+  /* Light mode - Warm palette */
+  --background: #faf7f2;
+  --foreground: #1a1410;
+  --card: #ffffff;
+  --card-foreground: #1a1410;
+  --popover: #ffffff;
+  --popover-foreground: #1a1410;
+  --primary: #2c6e6a;
+  --primary-foreground: #ffffff;
+  --secondary: #f5efe6;
+  --secondary-foreground: #1a1410;
+  --muted: #e8ddd0;
+  --muted-foreground: #6b5d4f;
+  --accent: #b8860b;
+  --accent-foreground: #ffffff;
+  --destructive: #dc2626;
+  --destructive-foreground: #ffffff;
+  --border: rgba(26, 20, 16, 0.15);
+  --input: rgba(26, 20, 16, 0.08);
+  --ring: #2c6e6a;
+  --radius: 0.75rem;
+  
+  /* Brand colors */
+  --gold: #b8860b;
+  --gold-light: #d4a843;
+  --gold-dark: #9a6d08;
+  --teal: #2c6e6a;
+  --teal-light: #3d8f8a;
+  --teal-dark: #235554;
+  --coral: #e07a5f;
+  --sage: #81b29a;
+  
+  /* Utility colors */
+  --success: #059669;
+  --warning: #d97706;
+  --info: #0284c7;
+  --cream: #f5efe6;
+  --sand: #e8ddd0;
+}
+
+.dark {
+  /* Dark mode - Rich warm dark */
+  --background: #0d0a08;
+  --foreground: #f0ebe3;
+  --card: #181210;
+  --card-foreground: #f0ebe3;
+  --popover: #181210;
+  --popover-foreground: #f0ebe3;
+  --primary: #3d8f8a;
+  --primary-foreground: #0d0a08;
+  --secondary: #221c18;
+  --secondary-foreground: #f0ebe3;
+  --muted: #2d2620;
+  --muted-foreground: #9a8f82;
+  --accent: #d4a843;
+  --accent-foreground: #0d0a08;
+  --destructive: #ef4444;
+  --destructive-foreground: #0d0a08;
+  --border: rgba(240, 235, 227, 0.1);
+  --input: rgba(240, 235, 227, 0.08);
+  --ring: #3d8f8a;
+  
+  /* Brand colors - brighter in dark */
+  --gold: #d4a843;
+  --gold-light: #e8c06a;
+  --gold-dark: #b88a30;
+  --teal: #3d8f8a;
+  --teal-light: #5aabab;
+  --teal-dark: #2d6e6a;
+  --coral: #e88a6d;
+  --sage: #9ac4b0;
+  
+  --success: #10b981;
+  --warning: #f59e0b;
+  --info: #38bdf8;
+  --cream: #221c18;
+  --sand: #2d2620;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not(.light) {
+    --background: #0d0a08;
+    --foreground: #f0ebe3;
+    --card: #181210;
+    --card-foreground: #f0ebe3;
+    --popover: #181210;
+    --popover-foreground: #f0ebe3;
+    --primary: #3d8f8a;
+    --primary-foreground: #0d0a08;
+    --secondary: #221c18;
+    --secondary-foreground: #f0ebe3;
+    --muted: #2d2620;
+    --muted-foreground: #9a8f82;
+    --accent: #d4a843;
+    --accent-foreground: #0d0a08;
+  }
+}
+
+* {
+  border-color: var(--border);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: 'DM Sans', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Playfair Display', serif;
+  font-weight: 600;
+}
+
+/* Arabic font */
+.arabic {
+  font-family: 'Amiri', serif;
+  direction: rtl;
+}
+
+/* Card flip animation */
+.card-3d-container { perspective: 1200px; }
+.card-3d { transform-style: preserve-3d; transition: transform 0.55s cubic-bezier(0.4, 0.2, 0.2, 1); }
+.card-3d.flipped { transform: rotateY(180deg); }
+.card-face { backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+.card-back { transform: rotateY(180deg); }
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--muted); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--muted-foreground); }
+
+/* Animations */
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes scaleIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+@keyframes pulse-soft { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
+
+.animate-fade-in { animation: fadeIn 0.3s ease-out; }
+.animate-slide-up { animation: slideUp 0.4s ease-out; }
+.animate-scale-in { animation: scaleIn 0.3s ease-out; }
+.animate-pulse-soft { animation: pulse-soft 2s ease-in-out infinite; }
+
+/* Gradient backgrounds */
+.bg-gradient-gold {
+  background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+}
+
+.bg-gradient-teal {
+  background: linear-gradient(135deg, var(--teal) 0%, var(--teal-light) 100%);
+}
+
+.bg-gradient-warm {
+  background: linear-gradient(180deg, var(--background) 0%, var(--secondary) 100%);
+}
+
+/* Glass effect */
+.glass {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.dark .glass {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Glow effects */
+.glow-gold {
+  box-shadow: 0 0 20px rgba(184, 134, 11, 0.3);
+}
+
+.glow-teal {
+  box-shadow: 0 0 20px rgba(44, 110, 106, 0.3);
+}
+
+/* Text gradients */
+.text-gradient-gold {
+  background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.text-gradient-teal {
+  background: linear-gradient(135deg, var(--teal) 0%, var(--teal-light) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Badge styles */
+.badge-gold {
+  background: rgba(184, 134, 11, 0.15);
+  color: var(--gold);
+  border: 1px solid rgba(184, 134, 11, 0.3);
+}
+
+.badge-teal {
+  background: rgba(44, 110, 106, 0.15);
+  color: var(--teal);
+  border: 1px solid rgba(44, 110, 106, 0.3);
+}
+
+/* Button hover glow */
+.btn-glow:hover {
+  box-shadow: 0 4px 15px rgba(184, 134, 11, 0.4);
+}
+
+.btn-glow-teal:hover {
+  box-shadow: 0 4px 15px rgba(44, 110, 106, 0.4);
+}
+
+/* Tailwind color extensions */
+.bg-coral { background-color: #e07a5f; }
+.bg-sage { background-color: #81b29a; }
+.text-coral { color: #e07a5f; }
+.text-sage { color: #81b29a; }
+.border-coral { border-color: #e07a5f; }
+.border-sage { border-color: #81b29a; }
+.bg-coral\/10 { background-color: rgba(224, 122, 95, 0.1); }
+.bg-sage\/10 { background-color: rgba(129, 178, 154, 0.1); }
+
+/* Additional color utilities */
+.bg-success { background-color: var(--success); }
+.bg-warning { background-color: var(--warning); }
+.bg-info { background-color: var(--info); }
+.text-success { color: var(--success); }
+.text-warning { color: var(--warning); }
+.text-info { color: var(--info); }

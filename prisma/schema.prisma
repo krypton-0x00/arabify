@@ -1,0 +1,135 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  password  String?
+  image     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  decks     Deck[]
+  cards     Card[]
+  progress  CardProgress[]
+  goals     Goal[]
+  settings  UserSettings?
+  streaks   Streak[]
+}
+
+model UserSettings {
+  id             String @id @default(cuid())
+  userId         String @unique
+  user           User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  dailyGoal      Int    @default(20)
+  newCardsPerDay Int    @default(10)
+  theme          String @default("system")
+  language       String @default("en")
+}
+
+model Deck {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  coverImage  String?
+  language    String   @default("ar")
+  targetLang  String   @default("en")
+
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  isPublic    Boolean  @default(false)
+  isShared    Boolean  @default(false)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  cards       Card[]
+
+  @@index([userId])
+  @@index([isPublic])
+}
+
+model Card {
+  id     String   @id @default(cuid())
+  front  String
+  back   String
+  frontAudio String?
+  backAudio  String?
+  image  String?
+  notes  String?
+
+  deckId String
+  deck   Deck     @relation(fields: [deckId], references: [id], onDelete: Cascade)
+
+  userId String
+  user   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  progress    CardProgress[]
+
+  @@unique([deckId, front])
+  @@index([deckId])
+}
+
+model CardProgress {
+  id            String   @id @default(cuid())
+  cardId        String
+  card          Card     @relation(fields: [cardId], references: [id], onDelete: Cascade)
+
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  easeFactor    Float    @default(2.5)
+  interval      Int      @default(0)
+  repetitions   Int      @default(0)
+  nextReview    DateTime @default(now())
+
+  lastQuality   Int      @default(-1)
+  lastReview    DateTime?
+
+  isKnown       Boolean  @default(false)
+  isLearning    Boolean  @default(true)
+  lapses        Int      @default(0)
+
+  totalReviews  Int      @default(0)
+  correctCount  Int      @default(0)
+
+  @@unique([cardId, userId])
+  @@index([userId, nextReview])
+}
+
+model Goal {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  date      DateTime
+  target    Int
+  completed Int      @default(0)
+
+  createdAt DateTime @default(now())
+
+  @@unique([userId, date])
+}
+
+model Streak {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  current   Int      @default(0)
+  longest   Int      @default(0)
+  lastDate  DateTime @default(now())
+
+  @@unique([userId])
+}
