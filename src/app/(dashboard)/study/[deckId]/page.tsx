@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
@@ -35,6 +35,7 @@ export default function StudyPage() {
   const [isFlipped, setIsFlipped] = useState(false);
   const [completed, setCompleted] = useState<string[]>([]);
   const [studyMode, setStudyMode] = useState<StudyMode>("ar-en");
+  const [randomDirections, setRandomDirections] = useState<Record<string, boolean>>({});
 
   const { data: studyData, isLoading } = useQuery({
     queryKey: ["study", deckId],
@@ -59,11 +60,22 @@ export default function StudyPage() {
   const totalCards = studyData?.cards?.length || 0;
   const progress = totalCards > 0 ? ((currentIndex) / totalCards) * 100 : 0;
 
-  const getCardContent = () => {
+  const cardContent = useMemo(() => {
     if (!currentCard) return { front: "", back: "", image: null, frontIsArabic: true, backIsArabic: false };
     
     const isRandom = studyMode === "random";
-    const useEnFirst = isRandom ? Math.random() > 0.5 : studyMode === "en-ar";
+    let useEnFirst: boolean;
+    
+    if (isRandom) {
+      if (randomDirections[currentCard.id] === undefined) {
+        const newDir = Math.random() > 0.5;
+        useEnFirst = newDir;
+      } else {
+        useEnFirst = randomDirections[currentCard.id];
+      }
+    } else {
+      useEnFirst = studyMode === "en-ar";
+    }
     
     return {
       front: useEnFirst ? currentCard.back : currentCard.front,
@@ -72,9 +84,14 @@ export default function StudyPage() {
       frontIsArabic: !useEnFirst,
       backIsArabic: useEnFirst,
     };
-  };
+  }, [currentCard, studyMode, randomDirections]);
 
-  const cardContent = getCardContent();
+  useEffect(() => {
+    if (studyMode === "random" && currentCard && randomDirections[currentCard.id] === undefined) {
+      const newDir = Math.random() > 0.5;
+      setRandomDirections(prev => ({ ...prev, [currentCard.id]: newDir }));
+    }
+  }, [currentCard, studyMode, randomDirections]);
 
   const handleFlip = useCallback(() => {
     setIsFlipped((prev) => !prev);
@@ -85,6 +102,9 @@ export default function StudyPage() {
     setIsFlipped(false);
     setCurrentIndex(0);
     setCompleted([]);
+    if (mode !== "random") {
+      setRandomDirections({});
+    }
   };
 
   const handleRating = (quality: "again" | "hard" | "good" | "easy") => {

@@ -37,7 +37,11 @@ export async function GET(
       return NextResponse.json({ error: "Deck not found" }, { status: 404 });
     }
 
-    return NextResponse.json(deck);
+    return NextResponse.json({
+      ...deck,
+      isShared: deck.isShared,
+      shareCode: deck.shareCode,
+    });
   } catch (error) {
     console.error("Error fetching deck:", error);
     return NextResponse.json({ error: "Failed to fetch deck" }, { status: 500 });

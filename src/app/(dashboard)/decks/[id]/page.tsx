@@ -15,7 +15,7 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
-import { ArrowLeft, Plus, Play, Trash2, BookOpen } from "lucide-react";
+import { ArrowLeft, Plus, Play, Trash2, BookOpen, Share2, Globe, Link2 } from "lucide-react";
 
 interface Card {
   id: string;
@@ -44,6 +44,8 @@ export default function DeckDetailPage() {
   
   const [isAddCardOpen, setIsAddCardOpen] = useState(false);
   const [newCard, setNewCard] = useState({ front: "", back: "", notes: "" });
+  const [isShareOpen, setIsShareOpen] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   const { data: deck, isLoading } = useQuery({
     queryKey: ["deck", deckId],
@@ -61,6 +63,24 @@ export default function DeckDetailPage() {
       queryClient.invalidateQueries({ queryKey: ["deck", deckId] });
       setIsAddCardOpen(false);
       setNewCard({ front: "", back: "", notes: "" });
+    },
+  });
+
+  const shareMutation = useMutation({
+    mutationFn: () =>
+      fetch(`/api/decks/${deckId}/share`, { method: "POST" }).then((r) => r.json()),
+    onSuccess: (data) => {
+      if (data.shareCode) {
+        setIsShareOpen(true);
+      }
+    },
+  });
+
+  const unshareMutation = useMutation({
+    mutationFn: () =>
+      fetch(`/api/decks/${deckId}/share`, { method: "DELETE" }).then((r) => r.json()),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["deck", deckId] });
     },
   });
 
@@ -115,6 +135,27 @@ export default function DeckDetailPage() {
             Study
           </Button>
         </Link>
+        {(deck as any)?.isShared ? (
+          <Button 
+            variant="outline" 
+            className="gap-2 border-gold/30 text-gold hover:bg-gold/10"
+            onClick={() => unshareMutation.mutate()}
+            disabled={unshareMutation.isPending}
+          >
+            <Link2 className="w-4 h-4" />
+            Unshare
+          </Button>
+        ) : (
+          <Button 
+            variant="outline" 
+            className="gap-2"
+            onClick={() => shareMutation.mutate()}
+            disabled={shareMutation.isPending}
+          >
+            <Share2 className="w-4 h-4" />
+            Share
+          </Button>
+        )}
       </div>
 
       {/* Stats */}
@@ -256,6 +297,40 @@ export default function DeckDetailPage() {
               </Button>
             </DialogFooter>
           </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Share Dialog */}
+      <Dialog open={isShareOpen} onOpenChange={setIsShareOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Share This Deck</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <p className="text-sm text-muted-foreground">
+              Share this link with others. They can view and study the cards but cannot edit them.
+            </p>
+            <div className="flex items-center gap-2">
+              <Input
+                readOnly
+                value={`${typeof window !== "undefined" ? window.location.origin : ""}/share/${(deck as any)?.shareCode || ""}`}
+                className="font-mono text-sm"
+              />
+              <Button
+                variant="teal"
+                onClick={() => {
+                  navigator.clipboard.writeText(`${window.location.origin}/share/${(deck as any)?.shareCode}`);
+                  setCopied(true);
+                  setTimeout(() => setCopied(false), 2000);
+                }}
+              >
+                {copied ? "Copied!" : "Copy"}
+              </Button>
+            </div>
+            <Button variant="outline" onClick={() => setIsShareOpen(false)}>
+              Done
+            </Button>
+          </div>
         </DialogContent>
       </Dialog>
     </div>
