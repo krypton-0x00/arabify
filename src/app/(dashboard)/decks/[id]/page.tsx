@@ -71,8 +71,15 @@ export default function DeckDetailPage() {
       fetch(`/api/decks/${deckId}/share`, { method: "POST" }).then((r) => r.json()),
     onSuccess: (data) => {
       if (data.shareCode) {
+        queryClient.invalidateQueries({ queryKey: ["deck", deckId] });
         setIsShareOpen(true);
+      } else if (data.error) {
+        alert(data.error);
       }
+    },
+    onError: (error) => {
+      console.error("Share error:", error);
+      alert("Failed to share deck");
     },
   });
 

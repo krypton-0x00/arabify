@@ -60,15 +60,18 @@ export default function StudyPage() {
   const totalCards = studyData?.cards?.length || 0;
   const progress = totalCards > 0 ? ((currentIndex) / totalCards) * 100 : 0;
 
-  const cardContent = useMemo(() => {
+  const getCardContent = useCallback(() => {
     if (!currentCard) return { front: "", back: "", image: null, frontIsArabic: true, backIsArabic: false };
     
-    const isRandom = studyMode === "random";
     let useEnFirst: boolean;
     
-    if (isRandom) {
+    if (studyMode === "random") {
       if (randomDirections[currentCard.id] === undefined) {
         const newDir = Math.random() > 0.5;
+        setRandomDirections(prev => {
+          if (prev[currentCard.id] !== undefined) return prev;
+          return { ...prev, [currentCard.id]: newDir };
+        });
         useEnFirst = newDir;
       } else {
         useEnFirst = randomDirections[currentCard.id];
@@ -86,12 +89,7 @@ export default function StudyPage() {
     };
   }, [currentCard, studyMode, randomDirections]);
 
-  useEffect(() => {
-    if (studyMode === "random" && currentCard && randomDirections[currentCard.id] === undefined) {
-      const newDir = Math.random() > 0.5;
-      setRandomDirections(prev => ({ ...prev, [currentCard.id]: newDir }));
-    }
-  }, [currentCard, studyMode, randomDirections]);
+  const cardContent = getCardContent();
 
   const handleFlip = useCallback(() => {
     setIsFlipped((prev) => !prev);
