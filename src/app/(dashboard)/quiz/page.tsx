@@ -180,10 +180,11 @@ export default function QuizPage() {
               const isSelected = selectedAnswer === option;
               const isCorrect = option === currentQuestion.correctAnswer;
               
-              let buttonClass = "border-gold/30 hover:border-gold hover:bg-gold/10";
-              if (showResult) {
-                if (isCorrect) buttonClass = "border-teal bg-teal/20 text-teal";
-                else if (isSelected) buttonClass = "border-red-500 bg-red-500/20 text-red-500";
+              let buttonClass = "border-border hover:border-gold/50 hover:bg-gold/5";
+              if (showResult && isSelected) {
+                buttonClass = isCorrect 
+                  ? "border-teal bg-teal/10 text-teal" 
+                  : "border-red-500 bg-red-500/10 text-red-500";
               }
 
               return (
@@ -197,15 +198,12 @@ export default function QuizPage() {
                   onClick={() => handleAnswer(option)}
                   disabled={showResult}
                 >
-                  {isSelected && showResult && (
+                  {showResult && isSelected && (
                     isCorrect 
-                      ? <CheckCircle className="w-5 h-5 mr-2 text-teal" />
-                      : <XCircle className="w-5 h-5 mr-2 text-red-500" />
+                      ? <CheckCircle className="w-5 h-5 mr-2" />
+                      : <XCircle className="w-5 h-5 mr-2" />
                   )}
-                  <span className={cn(
-                    !isSelected && !showResult && "text-lg",
-                    isCorrect && !isSelected && "text-teal"
-                  )}>
+                  <span className="text-lg">
                     {option}
                   </span>
                 </Button>
@@ -261,11 +259,6 @@ export default function QuizPage() {
               <RefreshCw className="w-4 h-4" />
               Try Again
             </Button>
-            <Link href="/quiz">
-              <Button variant="outline">
-                Change Settings
-              </Button>
-            </Link>
           </div>
         </div>
       </div>
