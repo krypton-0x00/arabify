@@ -50,15 +50,18 @@ export default function StudyPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ cardId, quality }),
       }).then((r) => r.json()),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["study", deckId] });
-      queryClient.invalidateQueries({ queryKey: ["decks"] });
-    },
   });
 
   const currentCard = studyData?.cards?.[currentIndex];
   const totalCards = studyData?.cards?.length || 0;
   const progress = totalCards > 0 ? ((currentIndex) / totalCards) * 100 : 0;
+
+  useEffect(() => {
+    if (studyMode === "random" && currentCard && randomDirections[currentCard.id] === undefined) {
+      const newDir = Math.random() > 0.5;
+      setRandomDirections(prev => ({ ...prev, [currentCard.id]: newDir }));
+    }
+  }, [currentCard?.id, studyMode]);
 
   const getCardContent = useCallback(() => {
     if (!currentCard) return { front: "", back: "", image: null, frontIsArabic: true, backIsArabic: false };
@@ -66,16 +69,7 @@ export default function StudyPage() {
     let useEnFirst: boolean;
     
     if (studyMode === "random") {
-      if (randomDirections[currentCard.id] === undefined) {
-        const newDir = Math.random() > 0.5;
-        setRandomDirections(prev => {
-          if (prev[currentCard.id] !== undefined) return prev;
-          return { ...prev, [currentCard.id]: newDir };
-        });
-        useEnFirst = newDir;
-      } else {
-        useEnFirst = randomDirections[currentCard.id];
-      }
+      useEnFirst = randomDirections[currentCard.id] ?? false;
     } else {
       useEnFirst = studyMode === "en-ar";
     }
@@ -132,7 +126,7 @@ export default function StudyPage() {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [handleFlip, currentIndex, totalCards]);
+  }, [handleFlip, handleRating, currentIndex, totalCards]);
 
   if (isLoading) {
     return <div className="p-8 text-center text-muted-foreground">Loading study session...</div>;
@@ -232,7 +226,7 @@ export default function StudyPage() {
                 onClick={() => handleRating("again")}
                 disabled={reviewMutation.isPending}
               >
-                <XCircle className="w-4 h-4 mr-2" /> Again (1)
+                {reviewMutation.isPending ? <RotateCcw className="w-4 h-4 animate-spin" /> : <XCircle className="w-4 h-4 mr-2" />} Again (1)
               </Button>
               <Button
                 variant="coral"
@@ -240,7 +234,7 @@ export default function StudyPage() {
                 onClick={() => handleRating("hard")}
                 disabled={reviewMutation.isPending}
               >
-                Hard (2)
+                {reviewMutation.isPending ? <RotateCcw className="w-4 h-4 animate-spin" /> : null} Hard (2)
               </Button>
               <Button
                 variant="teal"
@@ -248,7 +242,7 @@ export default function StudyPage() {
                 onClick={() => handleRating("good")}
                 disabled={reviewMutation.isPending}
               >
-                Good (3)
+                {reviewMutation.isPending ? <RotateCcw className="w-4 h-4 animate-spin" /> : null} Good (3)
               </Button>
               <Button
                 variant="sage"
@@ -256,7 +250,7 @@ export default function StudyPage() {
                 onClick={() => handleRating("easy")}
                 disabled={reviewMutation.isPending}
               >
-                Easy (4)
+                {reviewMutation.isPending ? <RotateCcw className="w-4 h-4 animate-spin" /> : null} Easy (4)
               </Button>
             </div>
           </div>
