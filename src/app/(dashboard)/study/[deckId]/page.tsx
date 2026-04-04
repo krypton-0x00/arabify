@@ -89,18 +89,8 @@ export default function StudyPage() {
     setIsFlipped((prev) => !prev);
   }, []);
 
-  const changeMode = (mode: StudyMode) => {
-    setStudyMode(mode);
-    setIsFlipped(false);
-    setCurrentIndex(0);
-    setCompleted([]);
-    if (mode !== "random") {
-      setRandomDirections({});
-    }
-  };
-
-  const handleRating = (quality: "again" | "hard" | "good" | "easy") => {
-    if (!currentCard) return;
+  const handleRating = useCallback((quality: "again" | "hard" | "good" | "easy") => {
+    if (!currentCard || reviewMutation.isPending) return;
 
     reviewMutation.mutate({ cardId: currentCard.id, quality });
     setCompleted((prev) => [...prev, currentCard.id]);
@@ -111,6 +101,16 @@ export default function StudyPage() {
     } else {
       router.push(`/decks/${deckId}`);
     }
+  }, [currentCard, currentIndex, totalCards, deckId, reviewMutation, router]);
+
+  const changeMode = (mode: StudyMode) => {
+    setStudyMode(mode);
+    setIsFlipped(false);
+    setCurrentIndex(0);
+    setCompleted([]);
+    if (mode !== "random") {
+      setRandomDirections({});
+    }
   };
 
   useEffect(() => {
@@ -118,15 +118,24 @@ export default function StudyPage() {
       if (e.key === " " || e.key === "Enter") {
         e.preventDefault();
         handleFlip();
-      } else if (e.key === "1") handleRating("again");
-      else if (e.key === "2") handleRating("hard");
-      else if (e.key === "3") handleRating("good");
-      else if (e.key === "4") handleRating("easy");
+      } else if (e.key === "1") {
+        e.preventDefault();
+        handleRating("again");
+      } else if (e.key === "2") {
+        e.preventDefault();
+        handleRating("hard");
+      } else if (e.key === "3") {
+        e.preventDefault();
+        handleRating("good");
+      } else if (e.key === "4") {
+        e.preventDefault();
+        handleRating("easy");
+      }
     };
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [handleFlip, handleRating, currentIndex, totalCards]);
+  }, [handleFlip, handleRating]);
 
   if (isLoading) {
     return <div className="p-8 text-center text-muted-foreground">Loading study session...</div>;

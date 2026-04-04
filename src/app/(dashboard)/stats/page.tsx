@@ -3,8 +3,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { BarChart3, Flame, BookOpen, Target, TrendingUp, Calendar } from "lucide-react";
+import { BarChart3, Flame, BookOpen, Target, TrendingUp, Calendar, Award, Zap, Clock } from "lucide-react";
 import Link from "next/link";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
 
 interface StatsData {
   totalCards: number;
@@ -32,6 +33,8 @@ interface StatsData {
   retention: number;
 }
 
+const COLORS = ["#2c6e6a", "#b8860b", "#e07a5f"];
+
 export default function StatsPage() {
   const { data: stats, isLoading } = useQuery({
     queryKey: ["stats"],
@@ -52,6 +55,18 @@ export default function StatsPage() {
     100
   );
 
+  const pieData = [
+    { name: "Known", value: stats?.knownCards || 0 },
+    { name: "Learning", value: stats?.learningCards || 0 },
+    { name: "New", value: Math.max(0, (stats?.totalCards || 0) - (stats?.knownCards || 0) - (stats?.learningCards || 0)) },
+  ].filter(d => d.value > 0);
+
+  const weeklyChartData = stats?.weeklyActivity?.map((day: any) => ({
+    day: new Date(day.date).toLocaleDateString("en-US", { weekday: "short" }),
+    completed: day.completed,
+    target: day.target,
+  })) || [];
+
   return (
     <div className="p-8">
       <div className="mb-8">
@@ -66,118 +81,120 @@ export default function StatsPage() {
         <StatCard
           icon={<Flame className="w-6 h-6" />}
           label="Current Streak"
-          value={`${stats?.streak || 0} days`}
-          subtext={`Best: ${stats?.longestStreak || 0} days`}
+          value={`${stats?.streak || 0}`}
+          subtext={`days • Best: ${stats?.longestStreak || 0}`}
           color="text-gold"
+          bgColor="bg-gold/10"
         />
         <StatCard
           icon={<Target className="w-6 h-6" />}
-          label="Today's Progress"
+          label="Today's Goal"
           value={`${todayProgress.completed}/${todayProgress.target}`}
           subtext={`${Math.round(progressPercent)}% complete`}
           color="text-teal"
+          bgColor="bg-teal/10"
         />
         <StatCard
-          icon={<BookOpen className="w-6 h-6" />}
+          icon={<Zap className="w-6 h-6" />}
           label="Due Today"
           value={stats?.dueToday || 0}
           subtext="cards to review"
-          color="text-orange-500"
+          color="text-coral"
+          bgColor="bg-coral/10"
         />
         <StatCard
-          icon={<TrendingUp className="w-6 h-6" />}
-          label="Retention Rate"
+          icon={<Award className="w-6 h-6" />}
+          label="Retention"
           value={`${stats?.retention || 0}%`}
-          subtext="accuracy"
-          color="text-blue-500"
+          subtext="accuracy rate"
+          color="text-sage"
+          bgColor="bg-sage/10"
         />
       </div>
 
-      {/* Weekly Activity */}
+      {/* Charts Row */}
       <div className="grid lg:grid-cols-2 gap-6 mb-8">
+        {/* Weekly Activity Chart */}
         <div className="p-6 rounded-xl border border-border bg-card">
           <h3 className="font-semibold mb-4 flex items-center gap-2">
             <Calendar className="w-5 h-5 text-gold" />
             Weekly Activity
           </h3>
-          <div className="space-y-3">
-            {stats?.weeklyActivity?.map((day: any, i: number) => {
-              const percent = Math.min((day.completed / day.target) * 100, 100);
-              const dayName = new Date(day.date).toLocaleDateString("en-US", {
-                weekday: "short",
-              });
-              return (
-                <div key={i} className="flex items-center gap-3">
-                  <span className="text-sm text-muted-foreground w-12">
-                    {dayName}
-                  </span>
-                  <div className="flex-1">
-                    <Progress value={percent} className="h-2" />
-                  </div>
-                  <span className="text-sm w-16 text-right">
-                    {day.completed}/{day.target}
-                  </span>
-                </div>
-              );
-            })}
+          <div className="h-64">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={weeklyChartData}>
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
+                <XAxis dataKey="day" stroke="var(--muted-foreground)" fontSize={12} />
+                <YAxis stroke="var(--muted-foreground)" fontSize={12} />
+                <Tooltip 
+                  contentStyle={{ 
+                    backgroundColor: "var(--card)", 
+                    border: "1px solid var(--border)",
+                    borderRadius: "8px"
+                  }}
+                />
+                <Bar dataKey="completed" name="Completed" fill="#2c6e6a" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="target" name="Target" fill="#b8860b" fillOpacity={0.3} radius={[4, 4, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
           </div>
         </div>
 
-        {/* Overall Stats */}
+        {/* Card Distribution */}
         <div className="p-6 rounded-xl border border-border bg-card">
           <h3 className="font-semibold mb-4 flex items-center gap-2">
-            <BarChart3 className="w-5 h-5 text-gold" />
-            Learning Overview
+            <BookOpen className="w-5 h-5 text-teal" />
+            Card Distribution
           </h3>
-          <div className="space-y-4">
-            <div>
-              <div className="flex justify-between text-sm mb-1">
-                <span>Total Cards</span>
-                <span className="font-medium">{stats?.totalCards || 0}</span>
+          <div className="h-64 flex items-center justify-center">
+            {pieData.length > 0 ? (
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={pieData}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={60}
+                    outerRadius={80}
+                    paddingAngle={5}
+                    dataKey="value"
+                    label={({ name, percent }) => `${name} ${((percent || 0) * 100).toFixed(0)}%`}
+                    labelLine={false}
+                  >
+                    {pieData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip 
+                    contentStyle={{ 
+                      backgroundColor: "var(--card)", 
+                      border: "1px solid var(--border)",
+                      borderRadius: "8px"
+                    }}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+            ) : (
+              <p className="text-muted-foreground">No cards yet</p>
+            )}
+          </div>
+          <div className="flex justify-center gap-6 mt-4">
+            {pieData.map((entry, index) => (
+              <div key={entry.name} className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full" style={{ backgroundColor: COLORS[index] }} />
+                <span className="text-sm text-muted-foreground">{entry.name}</span>
               </div>
-              <Progress value={100} className="h-2" />
-            </div>
-            <div>
-              <div className="flex justify-between text-sm mb-1">
-                <span>Known</span>
-                <span className="font-medium text-teal">
-                  {stats?.knownCards || 0}
-                </span>
-              </div>
-              <Progress
-                value={
-                  stats?.totalCards
-                    ? (stats.knownCards / stats.totalCards) * 100
-                    : 0
-                }
-                className="h-2"
-                indicatorClassName="bg-teal"
-              />
-            </div>
-            <div>
-              <div className="flex justify-between text-sm mb-1">
-                <span>Learning</span>
-                <span className="font-medium text-gold">
-                  {stats?.learningCards || 0}
-                </span>
-              </div>
-              <Progress
-                value={
-                  stats?.totalCards
-                    ? (stats.learningCards / stats.totalCards) * 100
-                    : 0
-                }
-                className="h-2"
-                indicatorClassName="bg-gold"
-              />
-            </div>
+            ))}
           </div>
         </div>
       </div>
 
       {/* Deck Stats */}
       <div className="p-6 rounded-xl border border-border bg-card">
-        <h3 className="font-semibold mb-4">Progress by Deck</h3>
+        <h3 className="font-semibold mb-4 flex items-center gap-2">
+          <BarChart3 className="w-5 h-5 text-gold" />
+          Progress by Deck
+        </h3>
         {stats?.deckStats?.length === 0 ? (
           <p className="text-muted-foreground text-center py-8">
             No decks yet. Create one to start tracking progress!
@@ -191,19 +208,41 @@ export default function StatsPage() {
                     <div className="flex justify-between mb-1">
                       <span className="font-medium">{deck.name}</span>
                       <span className="text-sm text-muted-foreground">
-                        {deck.known}/{deck.total}
+                        {deck.known}/{deck.total} cards
                       </span>
                     </div>
                     <Progress value={deck.mastery} className="h-2" />
                   </div>
-                  <span className="text-lg font-bold text-gold">
-                    {deck.mastery}%
-                  </span>
+                  <div className="text-right">
+                    <span className="text-lg font-bold text-gold">
+                      {deck.mastery}%
+                    </span>
+                    <p className="text-xs text-muted-foreground">mastery</p>
+                  </div>
                 </div>
               </Link>
             ))}
           </div>
         )}
+      </div>
+
+      {/* Quick Stats */}
+      <div className="grid md:grid-cols-3 gap-6 mt-8">
+        <div className="p-6 rounded-xl border border-border bg-card text-center">
+          <Clock className="w-8 h-8 mx-auto text-teal mb-3" />
+          <p className="text-3xl font-bold text-teal">{stats?.totalCards || 0}</p>
+          <p className="text-sm text-muted-foreground">Total Cards</p>
+        </div>
+        <div className="p-6 rounded-xl border border-border bg-card text-center">
+          <Award className="w-8 h-8 mx-auto text-gold mb-3" />
+          <p className="text-3xl font-bold text-gold">{stats?.knownCards || 0}</p>
+          <p className="text-sm text-muted-foreground">Cards Mastered</p>
+        </div>
+        <div className="p-6 rounded-xl border border-border bg-card text-center">
+          <TrendingUp className="w-8 h-8 mx-auto text-sage mb-3" />
+          <p className="text-3xl font-bold text-sage">{stats?.retention || 0}%</p>
+          <p className="text-sm text-muted-foreground">Retention Rate</p>
+        </div>
       </div>
     </div>
   );
@@ -215,16 +254,20 @@ function StatCard({
   value,
   subtext,
   color,
+  bgColor,
 }: {
   icon: React.ReactNode;
   label: string;
   value: string | number;
   subtext: string;
   color: string;
+  bgColor: string;
 }) {
   return (
     <div className="p-6 rounded-xl border border-border bg-card">
-      <div className={`${color} mb-3`}>{icon}</div>
+      <div className={`${bgColor} w-12 h-12 rounded-xl flex items-center justify-center mb-3 ${color}`}>
+        {icon}
+      </div>
       <p className="text-2xl font-bold">{value}</p>
       <p className="text-sm text-muted-foreground">{label}</p>
       <p className="text-xs text-muted-foreground mt-1">{subtext}</p>
